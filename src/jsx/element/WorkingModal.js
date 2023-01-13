@@ -1,0 +1,162 @@
+import React, { useEffect, useState, Fragment, Component } from "react";
+import { useMoralis, useWeb3Contract } from "react-moralis";
+import {
+  DAIabi,
+  //BNBabi,
+  USDCabi,
+  USDTabi,
+  contractAddresses,
+  BUSDabi,
+  abi,
+} from "../constants/index.js";
+import { ethers } from "ethers";
+
+import { Listbox, Transition, ChevronUpDownIcon } from "@headlessui/react";
+import "../../css/skin/tw.css";
+
+const WorkingModal = ({ isVisible, onClose }) => {
+  const { Moralis, account, isWeb3Enabled, chainId: chainIdHex } = useMoralis();
+
+  let [balanceBUSD, setBalanceBUSD] = useState(0);
+  let [ValueOrder, setValueOrder] = useState(0);
+  let [approved, setApproved] = useState(0);
+  const chainId = parseInt(chainIdHex);
+
+  const presaleAddress =
+    chainId in contractAddresses ? contractAddresses[chainId][0] : null;
+  const BUSDaddress =
+    chainId in contractAddresses ? contractAddresses[chainId][1] : null;
+
+  const USDCaddress =
+    chainId in contractAddresses ? contractAddresses[chainId][2] : null;
+  const USDTaddress =
+    chainId in contractAddresses ? contractAddresses[chainId][3] : null;
+
+  const DAIaddress =
+    chainId in contractAddresses ? contractAddresses[chainId][4] : null;
+
+  const people = [
+    { id: 1, name: "BUSD", ABI: BUSDabi, address: BUSDaddress },
+    { id: 2, name: "USDC", ABI: USDCabi, address: USDCaddress },
+    { id: 3, name: "USDT", ABI: USDTabi, address: USDTaddress },
+    { id: 4, name: "DAI", ABI: DAIabi, address: DAIaddress },
+  ];
+  const [selectedPerson, setSelectedPerson] = useState(people[0]);
+
+  useEffect(() => {
+    if (isWeb3Enabled) {
+      updateUI();
+    }
+    // console.log(`${address}`);
+  }, [isWeb3Enabled, selectedPerson]);
+
+  const { runContractFunction: balanceOfBUSD } = useWeb3Contract({
+    abi: BUSDabi,
+    contractAddress: selectedPerson.address,
+    functionName: "balanceOf",
+    params: { _addr: account },
+  });
+
+  const { runContractFunction: depositBUSD } = useWeb3Contract({
+    abi: abi,
+    contractAddress: presaleAddress,
+    functionName: "depositBUSD",
+    params: {
+      _amount: ethers.utils.parseEther(ValueOrder || "1"),
+      token: selectedPerson.address,
+    },
+  });
+
+  const { runContractFunction: approve } = useWeb3Contract({
+    abi: BUSDabi,
+    contractAddress: selectedPerson.address,
+    functionName: "approve",
+    params: {
+      _spender: presaleAddress,
+      _value: ethers.utils.parseEther("1000000000000000000000"),
+    },
+  });
+
+  async function updateUI() {
+    const balanceCallBUSD = (await balanceOfBUSD()).toString();
+    setBalanceBUSD(balanceCallBUSD);
+    console.log(selectedPerson.address);
+  }
+  if (!isVisible) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm flex justify-center items-center ">
+      <div className="w-[500px] flex flex-col">
+        <button
+          className="text-blue-800 text-xl place-self-end"
+          onClick={() => onClose()}
+        >
+          {" "}
+          X
+        </button>{" "}
+        <div className="bg-white p-2 rounded-3xl">
+          <div>
+            Available{" "}
+            <Listbox value={selectedPerson} onChange={setSelectedPerson}>
+              {" "}
+              <Listbox.Button className="   relative w-50  rounded-lg bg-white  py-2 pl-3 pr-1 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm cursor-pointer border-solid border-2 border-blue-800   ">
+                {" "}
+                {selectedPerson.name}:
+                <span className=" pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"></span>{" "}
+              </Listbox.Button>{" "}
+              <Listbox.Options className="cursor-pointer absolute mt-1 max-h-60 w-[200px] overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                {people.map((person) => (
+                  <Listbox.Option
+                    key={person.id}
+                    value={person}
+                    className="ui-active:bg-blue-500 ui-active:text-white ui-not-active:bg-white ui-not-active:text-black"
+                  >
+                    {person.name}
+                  </Listbox.Option>
+                ))}
+              </Listbox.Options>
+            </Listbox>{" "}
+            {ethers.utils.formatUnits(balanceBUSD, "ether")} $
+            {selectedPerson.name}
+          </div>{" "}
+          <p class=" text-lg leading-loose md:text-xl">
+            <div></div>
+          </p>
+          <button
+            className=" my-3 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium text-sm rounded-lg px-5 py-2.5 text-center mr-5"
+            onClick={() => depositBUSD()}
+          >
+            {"               "}
+            buy {ValueOrder}
+          </button>{" "}
+          <button
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium text-sm rounded-lg px-5 py-2.5 text-center mr-5"
+            onClick={() => approve() && updateUI()}
+          >
+            {"    "}
+            approve
+          </button>{" "}
+          <input
+            class="cursor-pointer"
+            type="range"
+            w-full
+            min="0"
+            max={ethers.utils.formatUnits(balanceBUSD, "ether")}
+            step="0.1"
+            onChange={(event) => {
+              setValueOrder(event.target.value);
+            }}
+          />
+          {"            "}{" "}
+          <div className="text-black-800 text-xl place-self-end"> </div>
+          <div className="text-black-800 text-xl place-self-end"> </div>
+          <div className="text-black-800 text-xl place-self-end"> </div>
+          <div className="text-black-800 text-xl place-self-end"> </div>
+          You'll get ≈ {Math.round(ValueOrder / 0.03)} $SNOW
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default WorkingModal;

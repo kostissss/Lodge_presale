@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="manifest" href="/site.webmanifest" />
+</head>
+
+<body id="bg" class="font-poppins">
+    <div id="loading-area">
+        <div></div>
+    </div>
+    <div class="page-wraper">
+        <div id="root"></div>
+    </div>
+    <!-- JavaScript  files ========================================= -->
+    <script src="js/jquery.min.js"></script><!-- JQUERY.MIN JS -->
+    <script src="plugins/bootstrap/js/popper.min.js"></script><!-- BOOTSTRAP.MIN JS -->
+    <script src="plugins/bootstrap/js/bootstrap.min.js"></script><!-- BOOTSTRAP.MIN JS -->
+    <script src="plugins/countdown/jquery.countdown.js"></script><!-- JQUERY COUNTDOWN -->
+    <script src="plugins/scroll/scrollbar.min.js"></script><!-- SCROLLBAR -->
+    <script src="plugins/imagesloaded/imagesloaded.js"></script><!-- IMAGESLOADED -->
+    <script src="plugins/masonry/masonry-3.1.4.js"></script><!-- MASONRY -->
+    <script src="plugins/masonry/masonry.filter.js"></script><!-- MASONRY -->
+    <script src="plugins/lightgallery/js/lightgallery-all.min.js"></script><!-- LIGHTGALLERY -->
+
+    <script src="plugins/particles/particles.js"></script><!-- PARTICLES JS  -->
+    <script src="plugins/particles/particles.app.js"></script><!-- PARTICLES JS  -->
+
+    <script src="plugins/countdown/kinetic.js"></script><!-- COUNTDOWN JS -->
+    <script src="plugins/countdown/jquery.final-countdown.js"></script><!-- COUNTDOWN JS -->
+    
+    <script src="plugins/countdown/countdown-main.js"></script><!-- COUNTDOWN FUCTIONS  -->
+    <script src="plugins/kenbern/slippry.min.js"></script><!-- KENBERN JS -->
+    <script src="plugins/colorful-snakes/colorful-snakes.js"></script><!-- Colorful Snakes JS -->
+    <script src="plugins/colorful-snakes/colorful-snakes.app.js"></script><!-- Colorful Snakes JS -->
+    <script src="js/dz.ajax.js"></script><!-- CONTACT JS  -->
+    <script src="js/rain-strom.js"></script><!-- KENBERN JS -->
+    <script src="js/rain.glass.js"></script><!-- WOW JS -->
+    <script src="js/custom.js"></script><!-- CUSTOM FUCTIONS  -->
+    <script src="js/wow.js"></script><!-- WOW JS -->
+    <script src="js/wave.js"></script><!-- WAVE JS -->
+    <script src='https://www.google.com/recaptcha/api.js'></script> <!-- Google API For Recaptcha  -->
+    
+
+    <script>
+        var viddeo = function () {
+            $(document).ready(function () {
+                sizeTheVideo();
+                $(window).resize(function () {
+                    sizeTheVideo();
+                });
+            });
+            function sizeTheVideo() {
+                // - 1.78 is the aspect ratio of the video
+                // - This will work if your video is 1920 x 1080
+                // - To find this value divide the video's native width by the height eg 1920/1080 = 1.78
+                var aspectRatio = 1.78;
+
+                var video = $('#videoWithJs iframe');
+                var videoHeight = video.outerHeight();
+                var newWidth = videoHeight * aspectRatio;
+                var halfNewWidth = newWidth / 2;
+
+                //Define the new width and centrally align the iframe
+                video.css({ "width": newWidth + "px", "left": "50%", "margin-left": "-" + halfNewWidth + "px" });
+            }
+        }
+
+        viddeo();
+
+        var handleSideBarMenu = function () {
+
+            $('.openbtn').on('click', function () {
+                $('.about-sidebox').addClass('active');
+
+            });
+            $('.closebtn').on('click', function () {
+                $('.about-sidebox').removeClass('active');
+
+            });
+            $('.map-btn').on('click', function () {
+                $('.map-box').toggleClass('active');
+            });
+
+            $('.menu-btn a').on('click', function () {
+                $('.menuleft').addClass('active');
+
+            });
+            // jQuery('.switch-btn').on('click', function () {
+            //     jQuery('.styleswitcher-right').toggleClass('active');
+
+            // });
+
+
+
+
+
+        }
+
+        handleSideBarMenu();
+
+        $(".switch-btn").click(function () {
+            $(".styleswitcher-right").toggleClass("active");
+        });
+    </script>
+
+</body>
+
+</html>
